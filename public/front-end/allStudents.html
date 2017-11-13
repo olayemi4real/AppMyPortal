@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+	<title>All students</title>
+    <link rel="stylesheet" href="/front-end/bootstrap-3.3.6-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/front-end/bootstrap-3.3.6-dist/css/customcss.css">
+    <link rel="stylesheet" href="/front-end/font-awesome-4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+</head>
+<body>
+<div class="wrapper row1">
+    <header id="header" class="hoc clear">
+        <!-- ################################################################################################ -->
+        <div id="logo" class="fl_left">
+            <h1><a href="index.html">MY PORTAL</a></h1>
+        </div>
+        <nav id="mainav" class="fl_right">
+            <ul class="clear">
+                <li class="active"><a href="index.html">HOME</a></li>
+                <li><a class="drop" href="/front-end/register.html">REGISTER</a>
+                <!-- <li><a href="login.php">LOG IN</a></li> -->
+                <li><a href="/front-end/allStudents.html">ALL STUDENTS</a></li>
+
+            </ul>
+        </nav>
+    </header>
+</div>
+	<table class="table table-hover">
+		<thead>
+			<td>Fullname</td>
+			<td>Matric Number</td>
+			<td>Age</td>
+			<td>Faculty</td>
+			<td>Department</td>
+			<td>Level</td>
+			<td>Cgpa</td>
+			<td>Buttons</td>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+</body>
+
+    <script src="/front-end/bootstrap-3.3.6-dist/js/jquery-1.12.3.min.js"></script>
+    <script src="/front-end/bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
+    <script src="/front-end/bootstrap-3.3.6-dist/js/jquery.cookie.js"></script>
+<script>
+	$(document).ready(function () {
+    	allStudents();
+	});
+	function allStudents() {
+	    var theStudents = '';
+	    $.ajax({
+	    	url: '/students/all',
+	    	type: 'GET',
+	    	success: function(data){
+	    		var theStudents = '';
+	    		$.each(data, function () {
+		            theStudents += '<tr>';
+		            theStudents += '<td class="the_name">' + this.fullname + '</td>';
+		            theStudents += '<td>' + this.matric + '</td>';
+		            theStudents += '<td>' + this.age + '</td>';
+		            theStudents += '<td>' + this.faculty + '</td>';
+		            theStudents += '<td>' + this.department + '</td>';
+		            theStudents += '<td>' + this.level + '</td>';
+		            theStudents += '<td>' + this.cgpa + '</td>';
+		            theStudents += '<td><button class="edit-button">Edit</button><button class="delete-button">Delete</button></td>';
+		            theStudents += '</tr>';
+				});
+				$('table tbody').html(theStudents);
+	    	}
+	    })
+	}
+	$(document).on('click', '.delete-button', function(){
+		var row = $(this).parent().parent();
+		var fullname = row.find('.the_name').text();
+		$.ajax({
+			url: '/students/'+fullname+'/delete',
+			type: 'GET',
+			success: function(response){
+				alert(response);
+				location.reload();
+			}
+		})
+	})
+	$(document).on('click', '.edit-button', function(){
+		var row = $(this).parent().parent();
+		var fullname = row.find('.the_name').text();
+		$.cookie('fullname', fullname, {expires: 7, path: '/'});
+		window.location.href = '/front-end/EDIT.html';
+	})
+</script>
+</html>
